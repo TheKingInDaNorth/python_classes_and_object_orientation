@@ -32,7 +32,10 @@ class IntList(SimpleList):
     def __init__(self, items=()):
         for x in items:
             self._validate(x)
-        super().__init__(items)
+        s = super()
+        print(s)
+        s.__init__(items)
+        print(s.__init__)
 
     @staticmethod
     def _validate(x):
