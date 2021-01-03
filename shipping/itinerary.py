@@ -1,13 +1,13 @@
 import functools
 
 from shipping import *
+from Location import *
+
 from functools import wraps
 
 
 def postcondition(predicate):
-
     def function_decorator(f):
-
         @functools.wraps(f)
         def wrapper(self, *args, **kwargs):
             result = f(self, *args, **kwargs)
@@ -23,10 +23,36 @@ def postcondition(predicate):
     return function_decorator
 
 
+def invariant(predicate):
+    function_decorator = postcondition(predicate)
+
+    def class_decorator(cls):
+        members = list(vars(cls).items())
+        for name, member in members:
+            if inspect.isfunction(member):
+                decorated_member = function_decorator(member)
+                setattr(cls, name, decorated_member)
+        return cls
+
+    return class_decorator
+
+
 def at_least_two_locations(itinerary):
     return len(itinerary._locations) >= 2
 
 
+def no_duplicates(itinerary):
+    already_seen = set()
+    for location in itinerary._locations:
+        if location in already_seen:
+            return False
+        already_seen.add(location)
+    return True
+
+
+@auto_repr
+@invariant(no_duplicates)
+@invariant(at_least_two_locations)
 class Itinerary:
 
     @classmethod
@@ -52,11 +78,9 @@ class Itinerary:
     def destination(self):
         return self._locations[-1]
 
-    @postcondition(at_least_two_locations)
     def add(self, location):
         self._locations.append(location)
 
-    @postcondition(at_least_two_locations)
     def remove(self, name):
         removal_indexes = [
             index for index, location in enumerate(self._locations)
@@ -65,8 +89,6 @@ class Itinerary:
         for index in reversed(removal_indexes):
             del self._locations[index]
 
-
-    @postcondition(at_least_two_locations)
     def truncate_at(self, name):
         stop = None
         for index, location in enumerate(self._locations):
