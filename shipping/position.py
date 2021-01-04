@@ -45,6 +45,13 @@ class Position:
             f"{longitude} {self.longitude_hemisphere}"
         )
 
+#    def __eq__(self, other):
+#        if type(other).__name__ != type(self).__name__:
+#            return False
+#        if self._latitude == other.latitude and self._longitude == other.longitude:
+#            return True
+#       return False
+
 
 class EarthPosition(Position):
     pass
