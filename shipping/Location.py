@@ -1,6 +1,7 @@
 import inspect
 
-from position import *
+from dataclasses import dataclass
+from position import Position, EarthPosition
 
 
 def auto_repr(cls):
@@ -40,31 +41,10 @@ def auto_repr(cls):
     return cls
 
 
-@auto_repr
+@dataclass(eq=True, frozen=True)
 class Location:
-
-    def __init__(self, name, position):
-        self._name = name
-        self._position = position
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def position(self):
-        return self._position
-
-    def __str__(self):
-        return self.name
-
-    def __eq__(self, other):
-        if not isinstance(other, type(self)):
-            return NotImplemented
-        return (self.name == other.name) and (self.position == other.position)
-
-    def __hash__(self):
-        return hash((self.name, self.position))
+    name: str
+    position: Position
 
 
 hong_kong = Location("Hong Kong", EarthPosition(22.29, 114.16))
