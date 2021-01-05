@@ -46,6 +46,10 @@ class Location:
     name: str
     position: Position
 
+    def __post_init__(self):
+        if self.name == "":
+            raise ValueError("Location name cannot be empty")
+
 
 hong_kong = Location("Hong Kong", EarthPosition(22.29, 114.16))
 stockholm = Location("Stockholm", EarthPosition(59.33, 18.06))
